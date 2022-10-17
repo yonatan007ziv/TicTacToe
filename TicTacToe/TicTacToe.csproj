@@ -49,6 +49,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ServerClientOpener.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ServerClientOpener.Designer.cs">
+      <DependentUpon>ServerClientOpener.cs</DependentUpon>
+    </Compile>
     <Compile Include="TicTacToe.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,6 +69,9 @@
     <Compile Include="TicTacToeServer.Designer.cs">
       <DependentUpon>TicTacToeServer.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ServerClientOpener.resx">
+      <DependentUpon>ServerClientOpener.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TicTacToe.resx">
       <DependentUpon>TicTacToe.cs</DependentUpon>
     </EmbeddedResource>

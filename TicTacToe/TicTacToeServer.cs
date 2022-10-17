@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Net;
+using System.Diagnostics;
+
 namespace TicTacToe
 {
     public partial class TicTacToeServer : Form
@@ -28,12 +30,10 @@ namespace TicTacToe
 
                 for (int i = 0; i < 2; i++)
                 {
-                    LogToConsole("Waiting for player...");
                     if (i == 0)
                         await WaitForPlayerAsync("first");
                     else if (i == 1)
                         await WaitForPlayerAsync("second");
-                    LogToConsole($"Connected!");
                 }
                 NetworkStream streamP1 = firstPlayer.GetStream();
                 NetworkStream streamP2 = secondPlayer.GetStream();
@@ -43,7 +43,6 @@ namespace TicTacToe
 
                 // write player order
                 RandomPlayerOrder();
-
                 InstructionListeningLoopAsync();
             }
             catch (SocketException SE)
@@ -59,7 +58,7 @@ namespace TicTacToe
             LogToConsole("Waiting for player...");
             if (player == "first")
             {
-                firstPlayer = await Task.Run(() => server.AcceptTcpClientAsync());
+                firstPlayer = await server.AcceptTcpClientAsync();
                 WriteData(firstPlayer.GetStream(), sizeData, 4);
             }
             else if (player == "second")
@@ -95,43 +94,14 @@ namespace TicTacToe
                 WriteData(firstPlayer.GetStream(), dataSecond);
             }
         }
-        private void StartClient(object sender, EventArgs e)
-        {
-            this.Invoke(new MethodInvoker(delegate ()
-            {
-                TicTacToe client = new TicTacToe();
-
-                client.TopMost = true;
-                client.Show();
-            }));
-        }
-        bool IsConnected(TcpClient _TcpClient)
+        public bool IsConnected(TcpClient _TcpClient)
         {
             try
             {
-                if (_TcpClient != null && _TcpClient.Client != null && _TcpClient.Client.Connected)
-                {
-                    // Detect if client disconnected
-                    if (_TcpClient.Client.Poll(0, SelectMode.SelectRead))
-                    {
-                        byte[] buff = new byte[1];
-                        if (_TcpClient.Client.Receive(buff, SocketFlags.Peek) == 0)
-                        {
-                            // Client disconnected
-                            return false;
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                string msg = "HEARTBEAT";
+                Byte[] data = Encoding.ASCII.GetBytes(msg);
+                WriteData(_TcpClient.GetStream(), data);
+                return true;
             }
             catch
             {
@@ -142,20 +112,23 @@ namespace TicTacToe
         {
             while (true)
             {
+                bool shouldContinue = false;
                 if (!IsConnected(firstPlayer))
                 {
                     resetInstruction();
                     await WaitForPlayerAsync("first");
                     RandomPlayerOrder();
-                    continue;
+                    shouldContinue = true;
                 }
                 if (!IsConnected(secondPlayer))
                 {
                     resetInstruction();
                     await WaitForPlayerAsync("second");
                     RandomPlayerOrder();
-                    continue;
+                    shouldContinue = true;
                 }
+                if (shouldContinue)
+                    continue;
                 string msgInsP1 = "", msgInsP2 = "";
                 if (firstPlayer.GetStream().DataAvailable)
                 {
@@ -196,8 +169,6 @@ namespace TicTacToe
                 moveInstruction(ins);
                 TryWin();
             }
-            else if (ins.Contains("LEAVE"))
-                disconnectInstruction(ins);
             else if (ins.Contains("RESET"))
             {
                 resetInstruction();
@@ -216,10 +187,6 @@ namespace TicTacToe
             if (secondPlayer.Connected)
                 WriteData(secondPlayer.GetStream(), data);
             initializeSimulatedButtonArray(boardLength);
-        }
-        void disconnectInstruction(string ins)
-        {
-            //disconnect properly
         }
         void moveInstruction(string ins)
         {

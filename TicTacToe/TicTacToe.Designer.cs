@@ -1,4 +1,6 @@
-﻿namespace TicTacToe
+﻿using System.Windows.Forms;
+
+namespace TicTacToe
 {
     partial class TicTacToe
     {
@@ -28,6 +30,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            FormClosing += LeaveGameButtonAfter;
             this.currentTurnLabel = new System.Windows.Forms.Label();
             this.leaveGameButton = new System.Windows.Forms.Button();
             this.connectButton = new System.Windows.Forms.Button();

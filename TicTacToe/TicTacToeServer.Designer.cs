@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.startClientButton = new System.Windows.Forms.Button();
             this.createBoardBtn = new System.Windows.Forms.Button();
             this.enterSizeLabel = new System.Windows.Forms.Label();
             this.sizeInput = new System.Windows.Forms.TextBox();
@@ -37,16 +36,6 @@
             this.portText = new System.Windows.Forms.Label();
             this.portTextBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
-            // 
-            // startClientButton
-            // 
-            this.startClientButton.Location = new System.Drawing.Point(706, 415);
-            this.startClientButton.Name = "startClientButton";
-            this.startClientButton.Size = new System.Drawing.Size(75, 23);
-            this.startClientButton.TabIndex = 1;
-            this.startClientButton.Text = "Start Client";
-            this.startClientButton.UseVisualStyleBackColor = true;
-            this.startClientButton.Click += new System.EventHandler(this.StartClient);
             // 
             // createBoardBtn
             // 
@@ -73,9 +62,9 @@
             this.sizeInput.Font = new System.Drawing.Font("Microsoft Sans Serif", 25F);
             this.sizeInput.Location = new System.Drawing.Point(318, 399);
             this.sizeInput.Name = "sizeInput";
-            this.sizeInput.Size = new System.Drawing.Size(250, 45);
+            this.sizeInput.Size = new System.Drawing.Size(34, 45);
             this.sizeInput.TabIndex = 13;
-            this.sizeInput.Text = "3";
+            this.sizeInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.sizeInput.TextChanged += new System.EventHandler(this.OnSizeChanged);
             // 
             // ServerLog
@@ -126,7 +115,6 @@
             this.Controls.Add(this.createBoardBtn);
             this.Controls.Add(this.enterSizeLabel);
             this.Controls.Add(this.sizeInput);
-            this.Controls.Add(this.startClientButton);
             this.Name = "TicTacToeServer";
             this.Text = "TicTacToeServer";
             this.ResumeLayout(false);
@@ -135,8 +123,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Button startClientButton;
         private System.Windows.Forms.Button createBoardBtn;
         private System.Windows.Forms.Label enterSizeLabel;
         private System.Windows.Forms.TextBox sizeInput;

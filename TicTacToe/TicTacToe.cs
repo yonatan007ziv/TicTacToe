@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Net.Sockets;
 using System.Text;
@@ -61,9 +62,7 @@ namespace TicTacToe
                 Byte[] data = await ReadDataAsync(client.GetStream());
                 string ins = Encoding.ASCII.GetString(data);
 
-                if (ins.Contains("Connected?"))
-                    ExecuteConnected();
-                else if (ins.Contains("VALIDATEDMOVE"))
+                if (ins.Contains("VALIDATEDMOVE"))
                     ExecuteValidatedMove(ins);
                 else if (ins.Contains("INVALIDMOVE"))
                     ExecuteInvalidMove(ins);
@@ -78,12 +77,6 @@ namespace TicTacToe
                 else if (ins.Contains("second"))
                     initializeSecondPlayer();
             }
-        }
-        void ExecuteConnected()
-        {
-            string msg = "Yes";
-            Byte[] data = Encoding.ASCII.GetBytes(msg);
-            WriteData(client.GetStream(), data);
         }
         void ExecuteReset()
         {
@@ -231,7 +224,12 @@ namespace TicTacToe
         }
         private void LeaveGameButton(object sender, EventArgs e)
         {
-            Application.Exit();
+            client.Close();
+            Close();
+        }
+        private void LeaveGameButtonAfter(object sender, EventArgs e)
+        {
+            client.Close();
         }
     }
 }

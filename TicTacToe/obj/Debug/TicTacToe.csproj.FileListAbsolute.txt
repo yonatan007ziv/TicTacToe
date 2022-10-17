@@ -21,3 +21,4 @@ D:\Code\VS Community\TicTacToe\TicTacToe\obj\Debug\TicTacToe.csproj.GenerateReso
 D:\Code\VS Community\TicTacToe\TicTacToe\obj\Debug\TicTacToe.csproj.CoreCompileInputs.cache
 D:\Code\VS Community\TicTacToe\TicTacToe\obj\Debug\TicTacToe.exe
 D:\Code\VS Community\TicTacToe\TicTacToe\obj\Debug\TicTacToe.pdb
+D:\Code\VS Community\TicTacToe\TicTacToe\obj\Debug\TicTacToe.ServerClientOpener.resources
