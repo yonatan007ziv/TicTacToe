@@ -208,15 +208,15 @@ namespace TicTacToe
             s.Write(dataSize, 0, 4);
             s.Write(data, 0, data.Length);
         }
-        private void ipTextChanged(object sender, EventArgs e)
+        private void IpTextChanged(object sender, EventArgs e)
         {
             serverAddr = ((TextBox)sender).Text;
         }
-        private void portTextChanged(object sender, EventArgs e)
+        private void PortTextChanged(object sender, EventArgs e)
         {
              int.TryParse(((TextBox)sender).Text, out port);
         }
-        private void resetGameButton(object sendyer, EventArgs e)
+        private void ResetGameButton(object sendyer, EventArgs e)
         {
             string msg = "RESET";
             Byte[] data = Encoding.ASCII.GetBytes(msg);

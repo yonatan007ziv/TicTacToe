@@ -97,7 +97,7 @@ namespace TicTacToe
             this.ipBox.Name = "ipBox";
             this.ipBox.Size = new System.Drawing.Size(100, 20);
             this.ipBox.TabIndex = 22;
-            this.ipBox.TextChanged += new System.EventHandler(this.ipTextChanged);
+            this.ipBox.TextChanged += new System.EventHandler(this.IpTextChanged);
             // 
             // portBox
             // 
@@ -105,7 +105,7 @@ namespace TicTacToe
             this.portBox.Name = "portBox";
             this.portBox.Size = new System.Drawing.Size(100, 20);
             this.portBox.TabIndex = 23;
-            this.portBox.TextChanged += new System.EventHandler(this.portTextChanged);
+            this.portBox.TextChanged += new System.EventHandler(this.PortTextChanged);
             // 
             // ipText
             // 
@@ -134,7 +134,7 @@ namespace TicTacToe
             this.resetButton.TabIndex = 26;
             this.resetButton.Text = "Reset Game";
             this.resetButton.UseVisualStyleBackColor = true;
-            this.resetButton.Click += new System.EventHandler(this.resetGameButton);
+            this.resetButton.Click += new System.EventHandler(this.ResetGameButton);
             // 
             // waitingForPlayerText
             // 
