@@ -1,22 +1,23 @@
 ﻿using TicTacToe.Library.Data;
-using TicTacToe.Library.Data.Enums;
+using TicTacToe.Server.Data;
+using TicTacToe.Server.Data.Enums;
 
-namespace TicTacToe.Library.Systems
+namespace TicTacToe.Server.Systems
 {
-    internal class GameFlow
+    internal class GameState
     {
         private readonly GameBoard board;
 
         public char CurrentTurn { get; private set; }
 
-        public GameFlow()
+        public GameState()
         {
             board = new GameBoard();
 
             // Random Starting Turn
             RandomizeTurn();
         }
-        
+
         public void ResetBoard()
         {
             board.ResetBoard();

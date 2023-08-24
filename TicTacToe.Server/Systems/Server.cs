@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using TicTacToe.Library.Handlers;
+using TicTacToe.Server.Handlers;
 
-namespace TicTacToe.Library.Systems
+namespace TicTacToe.Server.Systems
 {
     public class Server
     {
@@ -12,16 +12,15 @@ namespace TicTacToe.Library.Systems
         private readonly TcpListener listener = new TcpListener(IPAddress.Parse(ip), port);
         private readonly LobbyRouteHandler lobbyRouter = new LobbyRouteHandler();
 
-        public async Task ServerLoop()
+        public Server()
         {
             listener.Start();
-            await ConnectPlayersAsync();
         }
 
-        private async Task ConnectPlayersAsync()
+        public async Task ServerLoop()
         {
             while (true)
-                _ = new PlayerHandler(await listener.AcceptTcpClientAsync(), lobbyRouter.FindLobby());
+                _ = new PlayerMessagesHandler(await listener.AcceptTcpClientAsync(), lobbyRouter.FindLobby());
         }
     }
 }

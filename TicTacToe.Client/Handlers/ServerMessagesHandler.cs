@@ -2,18 +2,19 @@
 using System.Net.Sockets;
 using TicTacToe.Client.Controls;
 using TicTacToe.Library.Data;
+using TicTacToe.Library.Handlers;
 using TicTacToe.Library.MessageCodes;
 
 namespace TicTacToe.Client.Handlers
 {
-    public class PlayerHandler
+    public class ServerMessagesHandler
     {
         private readonly ClientHandler clientHandler;
         private readonly GameBoard boardView;
 
         public char Symbol { get; private set; }
 
-        public PlayerHandler(GameBoard boardView, IPAddress ip, int port)
+        public ServerMessagesHandler(GameBoard boardView, IPAddress ip, int port)
         {
             TcpClient socket = new TcpClient();
             socket.Connect(ip, port);
@@ -22,33 +23,22 @@ namespace TicTacToe.Client.Handlers
             clientHandler = new ClientHandler(socket, InterpretMessage);
         }
 
-        public void SendMessage(string msg)
+        public void SendMessage(CommunicationMessage msg, CommunicationParameter param = 0, int posX = -1, int posY = -1)
         {
-            clientHandler.WriteAsync(msg);
+            string strMsg = $"{(int)msg}{(param == 0 ? "" : $":{(int)param}")}{(posX == -1 || posY == -1 ? "" : $":{new Vector2(posX, posY)}")}";
+            Console.WriteLine($"Client SendMessage: {strMsg}");
+            clientHandler.WriteAsync(strMsg);
         }
 
         public void InterpretMessage(string msg)
         {
-            CommunicationMessage operation = 0;
-
-            bool hasParameter = false;
-            CommunicationParameter parameter = 0;
-            
-            if (msg.Contains(':'))
-            {
-                operation = (CommunicationMessage)Enum.Parse(typeof(CommunicationMessage), msg.Split(':')[0]);
-                hasParameter = Enum.TryParse(typeof(CommunicationParameter), msg.Split(':')[1],false, out _);
-            }
-            else
-                operation = (CommunicationMessage)Enum.Parse(typeof(CommunicationMessage), msg);
-
-            if (hasParameter)
-                parameter = (CommunicationParameter)Enum.Parse(typeof(CommunicationParameter), msg.Split(':')[1]);
+            string[] segments = msg.Split(':');
+            CommunicationMessage operation = (CommunicationMessage)int.Parse(segments[0]);
+            CommunicationParameter parameter = segments.Length > 1 ? (CommunicationParameter)int.Parse(segments[1]) : 0;
+            Vector2 posParam = segments.Length > 2 ? Vector2.FromString(segments[2]) : Vector2.Zero;
 
             switch (operation)
             {
-                case CommunicationMessage.Place:
-                    break;
                 case CommunicationMessage.PlayAgain:
                     boardView.ResetBoard();
                     break;
@@ -72,11 +62,12 @@ namespace TicTacToe.Client.Handlers
                             break;
                     }
                     break;
-                case CommunicationMessage.YourTurn:
-                    boardView.EnableEmptyButtons();
-                    break;
-                case CommunicationMessage.OpponentTurn:
-                    boardView.DisableButtons();
+                case CommunicationMessage.CurrentTurn:
+                    if (parameter == CommunicationParameter.PlayerX && Symbol == 'X'
+                        || parameter == CommunicationParameter.PlayerO && Symbol == 'O')
+                        boardView.EnableEmptyButtons();
+                    else
+                        boardView.DisableButtons();
                     break;
                 case CommunicationMessage.InvalidMoveWrongTurn:
                     boardView.Warning("Not your Turn");
@@ -87,24 +78,21 @@ namespace TicTacToe.Client.Handlers
                 case CommunicationMessage.Tie:
                     boardView.GameResult('T');
                     break;
-                case CommunicationMessage.XWon:
-                    boardView.GameResult('X');
+                case CommunicationMessage.Won:
+                    boardView.GameResult(parameter == CommunicationParameter.PlayerX ? 'X' : 'O');
                     break;
-                case CommunicationMessage.OWon:
-                    boardView.GameResult('O');
-                    break;
-                case CommunicationMessage.PlacedX:
-                    boardView.UpdateVisual('X', Vector2.FromString(msg.Split(':')[1]));
-                    break;
-                case CommunicationMessage.PlacedO:
-                    boardView.UpdateVisual('O', Vector2.FromString(msg.Split(':')[1]));
+                case CommunicationMessage.Placed:
+                    if (parameter == CommunicationParameter.PlayerX)
+                        boardView.UpdateVisual('X', posParam);
+                    else if (parameter == CommunicationParameter.PlayerO)
+                        boardView.UpdateVisual('O', posParam);
                     break;
             }
         }
 
         public void TryPlace(Vector2 pos)
         {
-            SendMessage($"{CommunicationMessage.Place}:{pos}");
+            SendMessage(CommunicationMessage.Place, Symbol == 'X' ? CommunicationParameter.PlayerX : CommunicationParameter.PlayerO, pos.X, pos.Y);
         }
 
         public void Disconnect()

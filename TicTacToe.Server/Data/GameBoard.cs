@@ -1,7 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using TicTacToe.Library.Data.Enums;
+﻿using TicTacToe.Library.Data;
+using TicTacToe.Server.Data.Enums;
 
-namespace TicTacToe.Library.Data
+namespace TicTacToe.Server.Data
 {
     public class GameBoard
     {

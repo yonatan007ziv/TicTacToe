@@ -1,4 +1,4 @@
-﻿namespace TicTacToe.Library.Data.Enums
+﻿namespace TicTacToe.Server.Data.Enums
 {
     public enum MoveResult
     {

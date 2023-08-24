@@ -2,20 +2,17 @@
 {
     public enum CommunicationMessage
     {
-        Place,
+        Place = 1,
         PlayAgain,
         Leave,
         NotifyWaiting,
         DisableNotifyWaiting,
         PlayerAssignment,
-        YourTurn,
-        OpponentTurn,
+        CurrentTurn,
         InvalidMoveWrongTurn,
         InvalidMove,
-        XWon,
-        OWon,
+        Won,
         Tie,
-        PlacedX,
-        PlacedO
+        Placed,
     }
 }

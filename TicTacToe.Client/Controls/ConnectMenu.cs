@@ -19,10 +19,10 @@ namespace TicTacToe.Client.Controls
             GameBoard boardControl = new GameBoard(mainWindow);
             mainWindow.AddViewControl(boardControl);
 
-            PlayerHandler playerHandler;
+            ServerMessagesHandler playerHandler;
             try
             {
-                playerHandler = new PlayerHandler(boardControl, IPAddress.Parse(ipInputField.Text), int.Parse(portInputField.Text));
+                playerHandler = new ServerMessagesHandler(boardControl, IPAddress.Parse(ipInputField.Text), int.Parse(portInputField.Text));
             }
             catch
             {

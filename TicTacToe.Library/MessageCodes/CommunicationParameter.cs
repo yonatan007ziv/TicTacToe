@@ -2,6 +2,8 @@
 {
     public enum CommunicationParameter
     {
-        PlayerX, PlayerO, AttachedPos
+        PlayerX = 1,
+        PlayerO,
+        AttachedPos
     }
 }

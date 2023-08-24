@@ -1,7 +1,7 @@
 ﻿using System.Net.Sockets;
 using System.Text;
 
-namespace TicTacToe.Client.Handlers
+namespace TicTacToe.Library.Handlers
 {
     public class ClientHandler
     {
@@ -11,6 +11,8 @@ namespace TicTacToe.Client.Handlers
         private readonly Byte[] buffer;
         private readonly CancellationTokenSource disconnectedCts = new CancellationTokenSource();
         private readonly Action<string> messageInterpreter;
+
+        public event Action? OnDisconnected;
 
         public ClientHandler(TcpClient socket, Action<string> interpreter)
         {
@@ -28,10 +30,20 @@ namespace TicTacToe.Client.Handlers
                 Byte[] msgBuffer = Encoding.UTF8.GetBytes(msg + Separator);
                 await _socket.GetStream().WriteAsync(msgBuffer, disconnectedCts.Token);
             }
+            catch (OperationCanceledException)
+            {
+                OnDisconnected?.Invoke();
+            }
             catch
             {
                 disconnectedCts.Cancel();
+                OnDisconnected?.Invoke();
             }
+        }
+
+        public void Disconnect()
+        {
+            _socket.Close();
         }
 
         private async void StartReadLoopAsync()
@@ -45,11 +57,13 @@ namespace TicTacToe.Client.Handlers
                 }
                 catch (OperationCanceledException)
                 {
+                    OnDisconnected?.Invoke();
                     return;
                 }
                 catch
                 {
                     disconnectedCts.Cancel();
+                    OnDisconnected?.Invoke();
                     return;
                 }
 
@@ -57,6 +71,7 @@ namespace TicTacToe.Client.Handlers
                 {
                     // The client has disconnected.
                     disconnectedCts.Cancel();
+                    OnDisconnected?.Invoke();
                     return;
                 }
 
@@ -70,11 +85,6 @@ namespace TicTacToe.Client.Handlers
             foreach (string msg in unseparated.Split(Separator))
                 if (msg != "")
                     messageInterpreter(msg);
-        }
-
-        public void Disconnect()
-        {
-            _socket.Close();
         }
     }
 }

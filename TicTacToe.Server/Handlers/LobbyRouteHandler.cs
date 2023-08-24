@@ -1,6 +1,6 @@
-﻿using TicTacToe.Library.Systems;
+﻿using TicTacToe.Server.Systems;
 
-namespace TicTacToe.Library.Handlers
+namespace TicTacToe.Server.Handlers
 {
     internal class LobbyRouteHandler
     {
@@ -16,8 +16,8 @@ namespace TicTacToe.Library.Handlers
             lobbies.Add(newLobby);
             return newLobby;
         }
-        
-        public void NotifyEmptyLobby(Lobby lobby)
+
+        public void RemoveLobby(Lobby lobby)
         {
             lobbies.Remove(lobby);
         }

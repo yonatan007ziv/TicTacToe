@@ -1,18 +1,19 @@
 ﻿using System.Net.Sockets;
 using TicTacToe.Library.Data;
+using TicTacToe.Library.Handlers;
 using TicTacToe.Library.MessageCodes;
-using TicTacToe.Library.Systems;
+using TicTacToe.Server.Systems;
 
-namespace TicTacToe.Library.Handlers
+namespace TicTacToe.Server.Handlers
 {
-    internal class PlayerHandler
+    internal class PlayerMessagesHandler
     {
         private readonly ClientHandler clientHandler;
         private readonly Lobby connectedLobby;
 
         public char Symbol { get; private set; } = '\0';
 
-        public PlayerHandler(TcpClient socket, Lobby connectedLobby)
+        public PlayerMessagesHandler(TcpClient socket, Lobby connectedLobby)
         {
             Console.WriteLine("New PlayerHandler");
             clientHandler = new ClientHandler(socket, InterpretMessage);
@@ -27,36 +28,25 @@ namespace TicTacToe.Library.Handlers
             connectedLobby.PlayerDisconnected(this);
         }
 
-        public void SendMessage(string msg)
+        public void SendMessage(CommunicationMessage msg, CommunicationParameter param = 0, int posX = -1, int posY = -1)
         {
-            Console.WriteLine($"PlayerHandler SendMessage: {msg}");
-            clientHandler.WriteAsync(msg);
+            string strMsg = $"{(int)msg}{(param == 0 ? "" : $":{(int)param}")}{(posX == -1 || posY == -1 ? "" : $":{new Vector2(posX, posY)}")}";
+            Console.WriteLine($"Server SendMessage: {msg} {param} ({posX},{posY})");
+            clientHandler.WriteAsync(strMsg);
         }
 
         public void InterpretMessage(string msg)
         {
-            Console.WriteLine($"PlayerHandler InterpretMessage: {msg}");
+            string[] segments = msg.Split(':');
+            CommunicationMessage operation = (CommunicationMessage)int.Parse(segments[0]);
+            CommunicationParameter parameter = segments.Length > 1 ? (CommunicationParameter)int.Parse(segments[1]) : 0;
+            Vector2 posParam = segments.Length > 2 ? Vector2.FromString(segments[2]) : Vector2.Zero;
 
-            CommunicationMessage operation = 0;
-
-            bool hasParameter = false;
-            CommunicationParameter parameter = 0;
-
-            if (msg.Contains(':'))
-            {
-                operation = (CommunicationMessage)Enum.Parse(typeof(CommunicationMessage), msg.Split(':')[0]);
-                hasParameter = Enum.TryParse(typeof(CommunicationParameter), msg.Split(':')[1], false, out _);
-            }
-            else
-                operation = (CommunicationMessage)Enum.Parse(typeof(CommunicationMessage), msg);
-
-            if (hasParameter)
-                parameter = (CommunicationParameter)Enum.Parse(typeof(CommunicationParameter), msg.Split(':')[1]);
-
+            Console.WriteLine($"Server InterpretMessage: {operation} {parameter} {posParam}");
             switch (operation)
             {
                 case CommunicationMessage.Place:
-                    TryPlace(Vector2.FromString(msg.Split(':')[1]));
+                    TryPlace(posParam);
                     break;
                 case CommunicationMessage.PlayAgain:
                     connectedLobby.PlayAgain();

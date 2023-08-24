@@ -2,6 +2,8 @@
 {
     public struct Vector2
     {
+        public static readonly Vector2 Zero = new Vector2(0, 0);
+
         public int X { get; private set; }
         public int Y { get; private set; }
 

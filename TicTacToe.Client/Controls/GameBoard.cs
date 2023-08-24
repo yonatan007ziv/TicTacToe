@@ -1,5 +1,4 @@
-﻿using System.Net;
-using TicTacToe.Client.Handlers;
+﻿using TicTacToe.Client.Handlers;
 using TicTacToe.Library.Data;
 using TicTacToe.Library.MessageCodes;
 
@@ -10,7 +9,7 @@ namespace TicTacToe.Client.Controls
         private readonly GameView mainWindow;
         private readonly Button[] boardButtons;
 
-        public PlayerHandler? PlayerHandler { get; set; }
+        public ServerMessagesHandler? PlayerHandler { get; set; }
         public char CurrentTurn
         {
             set
@@ -125,7 +124,7 @@ namespace TicTacToe.Client.Controls
 
         private void OnRestartButton(object sender, EventArgs e)
         {
-            PlayerHandler?.SendMessage($"{CommunicationMessage.PlayAgain}");
+            PlayerHandler?.SendMessage(CommunicationMessage.PlayAgain);
             restartButton.Invoke(() => restartButton.Enabled = false);
         }
     }

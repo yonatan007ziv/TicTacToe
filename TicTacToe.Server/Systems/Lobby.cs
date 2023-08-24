@@ -1,36 +1,39 @@
 ﻿using TicTacToe.Library.Data;
-using TicTacToe.Library.Data.Enums;
-using TicTacToe.Library.Handlers;
 using TicTacToe.Library.MessageCodes;
+using TicTacToe.Server.Data.Enums;
+using TicTacToe.Server.Handlers;
 
-namespace TicTacToe.Library.Systems
+namespace TicTacToe.Server.Systems
 {
     internal class Lobby
     {
-        private readonly GameFlow gameFlow = new GameFlow();
+        private readonly GameState gameState = new GameState();
         private readonly LobbyRouteHandler lobbyRouter;
 
         public int PlayerCount { get; private set; }
 
-        private PlayerHandler? x, o;
+        private PlayerMessagesHandler? x, o;
 
         public Lobby(LobbyRouteHandler lobbyRouter)
         {
             this.lobbyRouter = lobbyRouter;
         }
 
-        public void PlayerPlace(PlayerHandler player, Vector2 pos)
+        public void PlayerPlace(PlayerMessagesHandler player, Vector2 pos)
         {
-            if (gameFlow.CurrentTurn != player.Symbol)
+            if (gameState.CurrentTurn != player.Symbol)
             {
-                player.SendMessage($"{CommunicationMessage.InvalidMoveWrongTurn}");
+                player.SendMessage(CommunicationMessage.InvalidMoveWrongTurn);
                 return;
             }
 
-            MoveResult result = gameFlow.PlayerMove(pos);
+            MoveResult result = gameState.PlayerMove(pos);
 
             if (result == MoveResult.InvalidMove)
-                player.SendMessage($"{CommunicationMessage.InvalidMove}");
+            {
+                player.SendMessage(CommunicationMessage.InvalidMove);
+                return;
+            }
 
             NotifyMove(player.Symbol, pos);
 
@@ -51,7 +54,7 @@ namespace TicTacToe.Library.Systems
             }
         }
 
-        public void AddPlayer(PlayerHandler player)
+        public void AddPlayer(PlayerMessagesHandler player)
         {
             if (x == null)
             {
@@ -74,12 +77,12 @@ namespace TicTacToe.Library.Systems
             if (player == x)
             {
                 player.SetSymbol('X');
-                player.SendMessage($"{CommunicationMessage.PlayerAssignment}:{CommunicationParameter.PlayerX}");
+                player.SendMessage(CommunicationMessage.PlayerAssignment, CommunicationParameter.PlayerX);
             }
             else if (player == o)
             {
                 player.SetSymbol('O');
-                player.SendMessage($"{CommunicationMessage.PlayerAssignment}:{CommunicationParameter.PlayerO}");
+                player.SendMessage(CommunicationMessage.PlayerAssignment, CommunicationParameter.PlayerO);
             }
 
             if (PlayerCount == 2)
@@ -90,30 +93,30 @@ namespace TicTacToe.Library.Systems
 
         private void UpdateTurns()
         {
-            if (gameFlow.CurrentTurn == 'X')
+            if (gameState.CurrentTurn == 'X')
             {
-                x?.SendMessage($"{CommunicationMessage.YourTurn}");
-                o?.SendMessage($"{CommunicationMessage.OpponentTurn}");
+                x?.SendMessage(CommunicationMessage.CurrentTurn, CommunicationParameter.PlayerX);
+                o?.SendMessage(CommunicationMessage.CurrentTurn, CommunicationParameter.PlayerX);
             }
-            else if (gameFlow.CurrentTurn == 'O')
+            else if (gameState.CurrentTurn == 'O')
             {
-                x?.SendMessage($"{CommunicationMessage.OpponentTurn}");
-                o?.SendMessage($"{CommunicationMessage.YourTurn}");
+                x?.SendMessage(CommunicationMessage.CurrentTurn, CommunicationParameter.PlayerO);
+                o?.SendMessage(CommunicationMessage.CurrentTurn, CommunicationParameter.PlayerO);
             }
         }
 
         public void PlayAgain()
         {
-            x?.SendMessage($"{CommunicationMessage.PlayAgain}");
-            o?.SendMessage($"{CommunicationMessage.PlayAgain}");
+            x?.SendMessage(CommunicationMessage.PlayAgain);
+            o?.SendMessage(CommunicationMessage.PlayAgain);
 
-            gameFlow.ResetBoard();
-            gameFlow.RandomizeTurn();
+            gameState.ResetBoard();
+            gameState.RandomizeTurn();
 
             UpdateTurns();
         }
 
-        public void PlayerDisconnected(PlayerHandler playerHandler)
+        public void PlayerDisconnected(PlayerMessagesHandler playerHandler)
         {
             PlayerCount--;
             if (x == playerHandler)
@@ -122,9 +125,9 @@ namespace TicTacToe.Library.Systems
                 o = null;
 
             if (PlayerCount == 0)
-                lobbyRouter.NotifyEmptyLobby(this);
+                lobbyRouter.RemoveLobby(this);
 
-            gameFlow.ResetBoard();
+            gameState.ResetBoard();
             NotifyWaitingForPlayer();
         }
 
@@ -132,13 +135,13 @@ namespace TicTacToe.Library.Systems
         {
             if (symbol == 'X')
             {
-                x?.SendMessage($"{CommunicationMessage.PlacedX}:{pos}");
-                o?.SendMessage($"{CommunicationMessage.PlacedX}:{pos}");
+                x?.SendMessage(CommunicationMessage.Placed, CommunicationParameter.PlayerX, pos.X, pos.Y);
+                o?.SendMessage(CommunicationMessage.Placed, CommunicationParameter.PlayerX, pos.X, pos.Y);
             }
             else
             {
-                x?.SendMessage($"{CommunicationMessage.PlacedO}:{pos}");
-                o?.SendMessage($"{CommunicationMessage.PlacedO}:{pos}");
+                x?.SendMessage(CommunicationMessage.Placed, CommunicationParameter.PlayerO, pos.X, pos.Y);
+                o?.SendMessage(CommunicationMessage.Placed, CommunicationParameter.PlayerO, pos.X, pos.Y);
             }
         }
 
@@ -147,16 +150,16 @@ namespace TicTacToe.Library.Systems
             switch (w)
             {
                 case 'T':
-                    x?.SendMessage($"{CommunicationMessage.Tie}");
-                    o?.SendMessage($"{CommunicationMessage.Tie}");
+                    x?.SendMessage(CommunicationMessage.Tie);
+                    o?.SendMessage(CommunicationMessage.Tie);
                     break;
                 case 'X':
-                    x?.SendMessage($"{CommunicationMessage.XWon}");
-                    o?.SendMessage($"{CommunicationMessage.XWon}");
+                    x?.SendMessage(CommunicationMessage.Won, CommunicationParameter.PlayerX);
+                    o?.SendMessage(CommunicationMessage.Won, CommunicationParameter.PlayerX);
                     break;
                 case 'O':
-                    x?.SendMessage($"{CommunicationMessage.OWon}");
-                    o?.SendMessage($"{CommunicationMessage.OWon}");
+                    x?.SendMessage(CommunicationMessage.Won, CommunicationParameter.PlayerO);
+                    o?.SendMessage(CommunicationMessage.Won, CommunicationParameter.PlayerO);
                     break;
             }
         }
@@ -169,18 +172,17 @@ namespace TicTacToe.Library.Systems
                 NotifyWaitingForPlayer(o);
             else if (x != null && o != null)
                 DisableNotifyWaitingForPlayer();
-                
         }
 
         private void DisableNotifyWaitingForPlayer()
         {
-            x?.SendMessage($"{CommunicationMessage.DisableNotifyWaiting}");
-            o?.SendMessage($"{CommunicationMessage.DisableNotifyWaiting}");
+            x?.SendMessage(CommunicationMessage.DisableNotifyWaiting);
+            o?.SendMessage(CommunicationMessage.DisableNotifyWaiting);
         }
 
-        private static void NotifyWaitingForPlayer(PlayerHandler toNotify)
+        private static void NotifyWaitingForPlayer(PlayerMessagesHandler toNotify)
         {
-            toNotify.SendMessage($"{CommunicationMessage.NotifyWaiting}");
+            toNotify.SendMessage(CommunicationMessage.NotifyWaiting);
         }
     }
 }

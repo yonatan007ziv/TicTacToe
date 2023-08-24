@@ -1,4 +1,4 @@
-﻿namespace TicTacToe.Library
+﻿namespace TicTacToe.Server
 {
     internal class Program
     {
