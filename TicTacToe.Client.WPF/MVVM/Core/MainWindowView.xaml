@@ -1,0 +1,11 @@
+﻿<Window x:Class="TicTacToe.Client.WPF.MainWindowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewModels="clr-namespace:TicTacToe.Client.WPF.MVVM.ViewModels" xmlns:views="clr-namespace:TicTacToe.Client.WPF.MVVM.Views"
+		mc:Ignorable="d"
+        Title="MainWindowView" Height="450" Width="800">
+	<Grid>
+		<ContentControl Content="{Binding NavigationService.CurrentView}"/>
+	</Grid>
+</Window>
