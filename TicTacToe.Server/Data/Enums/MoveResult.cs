@@ -1,7 +1,6 @@
-﻿namespace TicTacToe.Server.Data.Enums
+﻿namespace TicTacToe.Server.Data.Enums;
+
+public enum MoveResult
 {
-	public enum MoveResult
-	{
-		XWon, OWon, Tie, NoResult, InvalidMove
-	}
+	XWon, OWon, Tie, NoResult, InvalidMove
 }

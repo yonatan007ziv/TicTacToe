@@ -2,40 +2,39 @@
 using TicTacToe.Server.Data;
 using TicTacToe.Server.Data.Enums;
 
-namespace TicTacToe.Server.Systems
+namespace TicTacToe.Server.Systems;
+
+internal class GameState
 {
-	internal class GameState
+	private readonly GameBoard board;
+
+	public char CurrentTurn { get; private set; }
+
+	public GameState()
 	{
-		private readonly GameBoard board;
+		board = new GameBoard();
 
-		public char CurrentTurn { get; private set; }
+		// Random Starting Turn
+		RandomizeTurn();
+	}
 
-		public GameState()
-		{
-			board = new GameBoard();
+	public void ResetBoard()
+	{
+		board.ResetBoard();
+	}
 
-			// Random Starting Turn
-			RandomizeTurn();
-		}
+	public MoveResult PlayerMove(Vector2 pos)
+	{
+		if (!board.ValidPos(pos))
+			return MoveResult.InvalidMove;
 
-		public void ResetBoard()
-		{
-			board.ResetBoard();
-		}
+		board.PlayerMove(CurrentTurn, pos);
+		CurrentTurn = CurrentTurn == 'O' ? 'X' : 'O';
+		return board.CheckBoardState();
+	}
 
-		public MoveResult PlayerMove(Vector2 pos)
-		{
-			if (!board.ValidPos(pos))
-				return MoveResult.InvalidMove;
-
-			board.PlayerMove(CurrentTurn, pos);
-			CurrentTurn = CurrentTurn == 'O' ? 'X' : 'O';
-			return board.CheckBoardState();
-		}
-
-		public void RandomizeTurn()
-		{
-			CurrentTurn = new Random().Next(2) == 0 ? 'X' : 'O';
-		}
+	public void RandomizeTurn()
+	{
+		CurrentTurn = new Random().Next(2) == 0 ? 'X' : 'O';
 	}
 }

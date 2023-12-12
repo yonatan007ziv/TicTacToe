@@ -1,10 +1,9 @@
-﻿namespace TicTacToe.Server
+﻿namespace TicTacToe.Server;
+
+internal class Program
 {
-	internal class Program
+	public static void Main(string[] args)
 	{
-		public static void Main(string[] args)
-		{
-			new Systems.Server().ServerLoop().GetAwaiter().GetResult();
-		}
+		new Systems.Server().ServerLoop().GetAwaiter().GetResult();
 	}
 }

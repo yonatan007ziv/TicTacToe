@@ -24,16 +24,25 @@
 		<TextBlock Text="{Binding StatusMessage}" />
 		<Button Command="{Binding ResetCmd}" Content="Reset" Grid.Column="4" Grid.Row="4" />
 
-		<ContentControl Content="{Binding Buttons[0]}" Grid.Column="1" Grid.Row="1" />
-		<ContentControl Content="{Binding Buttons[1]}" Grid.Column="2" Grid.Row="1" />
-		<ContentControl Content="{Binding Buttons[2]}" Grid.Column="3" Grid.Row="1" />
+		<Button Command="{Binding ButtonCmd}" CommandParameter="0" IsEnabled="{Binding GameHandler.ActivatedMapping[0]}" Content="{Binding GameHandler.Board[0]}"
+				Grid.Column="1" Grid.Row="1" Margin="25 10" />
+		<Button Command="{Binding ButtonCmd}" CommandParameter="1" IsEnabled="{Binding GameHandler.ActivatedMapping[1]}" Content="{Binding GameHandler.Board[1]}"
+				Grid.Column="2" Grid.Row="1" Margin="25 10" />
+		<Button Command="{Binding ButtonCmd}" CommandParameter="2" IsEnabled="{Binding GameHandler.ActivatedMapping[2]}" Content="{Binding GameHandler.Board[2]}"
+				Grid.Column="3" Grid.Row="1" Margin="25 10" />
 
-		<ContentControl Content="{Binding Buttons[3]}" Grid.Column="1" Grid.Row="2" />
-		<ContentControl Content="{Binding Buttons[4]}" Grid.Column="2" Grid.Row="2" />
-		<ContentControl Content="{Binding Buttons[5]}" Grid.Column="3" Grid.Row="2" />
+		<Button Command="{Binding ButtonCmd}" CommandParameter="3" IsEnabled="{Binding GameHandler.ActivatedMapping[3]}" Content="{Binding GameHandler.Board[3]}"
+				Grid.Column="1" Grid.Row="2" Margin="25 10" />
+		<Button Command="{Binding ButtonCmd}" CommandParameter="4" IsEnabled="{Binding GameHandler.ActivatedMapping[4]}" Content="{Binding GameHandler.Board[4]}"
+				Grid.Column="2" Grid.Row="2" Margin="25 10" />
+		<Button Command="{Binding ButtonCmd}" CommandParameter="5" IsEnabled="{Binding GameHandler.ActivatedMapping[5]}" Content="{Binding GameHandler.Board[5]}"
+				Grid.Column="3" Grid.Row="2" Margin="25 10" />
 
-		<ContentControl Content="{Binding Buttons[6]}" Grid.Column="1" Grid.Row="3" />
-		<ContentControl Content="{Binding Buttons[7]}" Grid.Column="2" Grid.Row="3" />
-		<ContentControl Content="{Binding Buttons[8]}" Grid.Column="3" Grid.Row="3" />
+		<Button Command="{Binding ButtonCmd}" CommandParameter="6" IsEnabled="{Binding GameHandler.ActivatedMapping[6]}" Content="{Binding GameHandler.Board[6]}"
+				Grid.Column="1" Grid.Row="3" Margin="25 10" />
+		<Button Command="{Binding ButtonCmd}" CommandParameter="7" IsEnabled="{Binding GameHandler.ActivatedMapping[7]}" Content="{Binding GameHandler.Board[7]}"
+				Grid.Column="2" Grid.Row="3" Margin="25 10" />
+		<Button Command="{Binding ButtonCmd}" CommandParameter="8" IsEnabled="{Binding GameHandler.ActivatedMapping[8]}" Content="{Binding GameHandler.Board[8]}"
+				Grid.Column="3" Grid.Row="3" Margin="25 10" />
 	</Grid>
 </UserControl>
